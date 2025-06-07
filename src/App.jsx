@@ -3,7 +3,7 @@ import axios from 'axios';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 
-const API = 'http://localhost:8080/api/todos';
+const API = `${import.meta.env.VITE_API_URL}/api/todos`;
 
 function App() {
   const [todos, setTodos] = useState([]);
