@@ -3,31 +3,50 @@ import axios from 'axios';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 
-const API = `${import.meta.env.VITE_API_URL}/api/todos`;
+const BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/+$/, ''); // remove trailing slash if any
+const API = `${BASE_URL}/api/todos`;
 
 function App() {
   const [todos, setTodos] = useState([]);
 
   const fetchTodos = async () => {
-    const res = await axios.get(API);
-    setTodos(res.data);
+    try {
+      const res = await axios.get(API, { withCredentials: true }); // support cookies if needed
+      setTodos(res.data);
+    } catch (error) {
+      console.error('❌ Error fetching todos:', error);
+    }
   };
 
-  useEffect(() => { fetchTodos(); }, []);
+  useEffect(() => {
+    fetchTodos();
+  }, []);
 
   const addTodo = async (todo) => {
-    const res = await axios.post(API, todo);
-    setTodos([...todos, res.data]);
+    try {
+      const res = await axios.post(API, todo, { withCredentials: true });
+      setTodos([...todos, res.data]);
+    } catch (error) {
+      console.error('❌ Error adding todo:', error);
+    }
   };
 
   const updateTodo = async (id, updated) => {
-    const res = await axios.put(`${API}/${id}`, updated);
-    setTodos(todos.map(t => t.id === id ? res.data : t));
+    try {
+      const res = await axios.put(`${API}/${id}`, updated, { withCredentials: true });
+      setTodos(todos.map(t => t.id === id ? res.data : t));
+    } catch (error) {
+      console.error('❌ Error updating todo:', error);
+    }
   };
 
   const deleteTodo = async (id) => {
-    await axios.delete(`${API}/${id}`);
-    setTodos(todos.filter(t => t.id !== id));
+    try {
+      await axios.delete(`${API}/${id}`, { withCredentials: true });
+      setTodos(todos.filter(t => t.id !== id));
+    } catch (error) {
+      console.error('❌ Error deleting todo:', error);
+    }
   };
 
   return (
